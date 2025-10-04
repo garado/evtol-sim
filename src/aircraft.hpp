@@ -2,6 +2,19 @@
 #ifndef __AIRCRAFT_H__
 #define __AIRCRAFT_H__
 
+enum AircraftType {
+  ALPHA,
+  BETA,
+  CHARLIE,
+  DELTA,
+  ECHO,
+  MAX_AIRCRAFT_TYPES,
+};
+
+static const char *aircraft_type_str[] = {
+    "Alpha", "Beta", "Charlie", "Delta", "Echo",
+};
+
 /**
  * @class Aircraft
  * @brief Represents a vehicle
@@ -14,6 +27,7 @@ public:
 
 private:
   // Aircraft characterization
+  AircraftType m_aircraft_type;
   int m_cruise_speed;         /** Cruise speed (mph) */
   int m_battery_cap;          /** Battery capacity (kWh) */
   double m_charge_time;       /** Time to charge (hours) */
@@ -26,6 +40,7 @@ private:
 
 class Alpha : public Aircraft {
 private:
+  AircraftType m_aircraft_type = ALPHA;
   int m_cruise_speed = 120;         /** Cruise speed (mph) */
   int m_battery_cap = 320;          /** Battery capacity (kWh) */
   double m_charge_time = 0.6;       /** Time to charge (hours) */
@@ -36,6 +51,7 @@ private:
 
 class Beta : public Aircraft {
 private:
+  AircraftType m_aircraft_type = BETA;
   int m_cruise_speed = 100;         /** Cruise speed (mph) */
   int m_battery_cap = 100;          /** Battery capacity (kWh) */
   double m_charge_time = 0.2;       /** Time to charge (hours) */
@@ -46,6 +62,7 @@ private:
 
 class Charlie : public Aircraft {
 private:
+  AircraftType m_aircraft_type = CHARLIE;
   int m_cruise_speed = 160;         /** Cruise speed (mph) */
   int m_battery_cap = 220;          /** Battery capacity (kWh) */
   double m_charge_time = 0.8;       /** Time to charge (hours) */
@@ -56,6 +73,7 @@ private:
 
 class Delta : public Aircraft {
 private:
+  AircraftType m_aircraft_type = DELTA;
   int m_cruise_speed = 90;          /** Cruise speed (mph) */
   int m_battery_cap = 120;          /** Battery capacity (kWh) */
   double m_charge_time = 0.62;      /** Time to charge (hours) */
@@ -66,6 +84,7 @@ private:
 
 class Echo : public Aircraft {
 private:
+  AircraftType m_aircraft_type = ECHO;
   int m_cruise_speed = 30;          /** Cruise speed (mph) */
   int m_battery_cap = 150;          /** Battery capacity (kWh) */
   double m_charge_time = 0.3;       /** Time to charge (hours) */
