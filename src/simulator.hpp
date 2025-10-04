@@ -2,33 +2,24 @@
 #ifndef __SIMULATOR_H__
 #define __SIMULATOR_H__
 
+#include "aircraft.hpp"
+
 /**
  * @class Simulator
  * @brief
  */
 class Simulator {
 public:
-  Simulator() {}
-  ~Simulator() = default;
+  Simulator(int vehicle_count);
+  ~Simulator();
 
   void simulate(int simtime_ms);
   void report();
 
 private:
-  int step_ms = 10;         /** Time step interval (ms) */
-  int duration_ms = 180000; /** Simulation duration (ms) */
-};
-
-/**
- * @class Aircraft
- * @brief
- */
-class Aircraft {
-public:
-  Aircraft() = default;
-  ~Aircraft() = default;
-
-private:
+  int m_step_ms = 10;       /** Time step interval (ms) */
+  int m_vehicle_count = 20; /** Number of vehicles to use in the simulation */
+  Aircraft m_vehicles[20];
 };
 
 #endif /* __SIMULATOR_H__ */
