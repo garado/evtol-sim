@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -O2
 BUILD_DIR = build
 
 TARGET = $(BUILD_DIR)/joby
-SRCS = src/main.cpp src/simulator.cpp
+SRCS = src/main.cpp src/simulator.cpp src/aircraft.cpp
 OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 
 all: $(TARGET)
