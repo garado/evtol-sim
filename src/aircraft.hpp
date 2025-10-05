@@ -2,6 +2,9 @@
 #ifndef __AIRCRAFT_H__
 #define __AIRCRAFT_H__
 
+/**
+ * @brief Different types of aircraft.
+ */
 enum AircraftType {
   TYPE__ALPHA,
   TYPE__BETA,
@@ -11,6 +14,12 @@ enum AircraftType {
   MAX_AIRCRAFT_TYPES,
 };
 
+/** @brief Stringified AircraftType enum. */
+extern const char *aircraft_type_str[];
+
+/**
+ * @brief Enum for different aircraft operational modes.
+ */
 enum AircraftMode {
   MODE__IDLE,
   MODE__WAITING_TO_CHARGE,
@@ -19,23 +28,16 @@ enum AircraftMode {
   MAX_AIRCRAFT_MODES,
 };
 
-static const char *aircraft_type_str[] = {
-    "Alpha", "Beta", "Charlie", "Delta", "Echo",
-};
-
-static const char *aircraft_mode_str[] = {
-    "Idle",
-    "Charging",
-    "Flying",
-};
+/** @brief Stringified AircraftMode enum. */
+extern const char *aircraft_mode_str[];
 
 /**
  * @class Aircraft
- * @brief Represents a vehicle
+ * @brief Stores characteristics and simulation parameters for an aircraft.
  */
 class Aircraft {
 protected:
-  // Aircraft characterization
+  // Aircraft characterization (given)
   AircraftType m_aircraft_type;
   int m_cruise_speed;         /** Cruise speed (mph) */
   int m_max_battery_cap;      /** Battery capacity (kWh) */
@@ -43,15 +45,17 @@ protected:
   double m_energy_use_cruise; /** Energy use at cruise (kWh/mile) */
   int m_max_passenger_cnt;    /** Maximum passenger count */
   double m_p_fault_hourly;    /** Probability of fault per hour */
-  double m_max_trip_len;      /** Maximum trip distance (miles) */
+
+  // Aircraft characterization (derived)
+  double m_max_trip_len;       /** Maximum trip distance (miles) */
+  double m_reserve_bat_target; /** Reserve battery capacity target (kWh) */
 
   // Simulation parameters
   double m_sim_total_miles_flown; /** Total miles flown in a run */
   double m_sim_rem_energy;        /** Remaining battery capacity (kWh) */
   int m_sim_total_num_faults;     /** Total faults in a run */
-
-  AircraftMode m_sim_mode;     /** Current aircraft mode */
-  int m_sim_trip_len;          /** Trip length (miles) */
+  AircraftMode m_sim_mode;        /** Current aircraft mode */
+  double m_sim_trip_len;          /** Trip length (miles) */
   double m_sim_miles_traveled; /** Number of miles traveled on current trip */
   int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
 
@@ -68,7 +72,13 @@ public:
 
   virtual ~Aircraft() = default;
 
-  void update(double duration_ms);
+  void run(double duration_ms);
+
+  void start_trip(int passengers, double distance);
+
+  void fly(double duration_ms);
+
+  double calculate_trip_energy(double distance);
 
   // Getters/setters
   double get_rem_energy() { return m_sim_rem_energy; };
@@ -79,7 +89,16 @@ public:
   void set_mode(AircraftMode mode) { m_sim_mode = mode; };
 
   double get_trip_len() { return m_sim_trip_len; };
-  void set_trip_len(int len) { m_sim_trip_len = len; };
+
+  void set_trip_len(int len) {
+    if (len > m_max_trip_len) {
+      // TODO: Error handling
+      m_sim_trip_len = 0;
+      return;
+    }
+
+    m_sim_trip_len = len;
+  };
 
   double get_rem_trip_len() { return m_sim_miles_traveled; };
 
@@ -96,8 +115,10 @@ public:
     m_energy_use_cruise = 1.6;
     m_max_passenger_cnt = 4;
     m_p_fault_hourly = 0.25;
+
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = m_max_battery_cap;
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
   }
 };
 
@@ -111,8 +132,10 @@ public:
     m_energy_use_cruise = 1.5;
     m_max_passenger_cnt = 5;
     m_p_fault_hourly = 0.10;
+
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = m_max_battery_cap;
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
   }
 };
 
@@ -126,8 +149,10 @@ public:
     m_energy_use_cruise = 2.2;
     m_max_passenger_cnt = 3;
     m_p_fault_hourly = 0.05;
+
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = m_max_battery_cap;
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
   }
 };
 
@@ -141,8 +166,10 @@ public:
     m_energy_use_cruise = 0.8;
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.22;
+
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = m_max_battery_cap;
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
   }
 };
 
@@ -156,8 +183,10 @@ public:
     m_energy_use_cruise = 5.8;
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.61;
+
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = m_max_battery_cap;
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
   }
 };
 
