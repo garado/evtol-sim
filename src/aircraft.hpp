@@ -49,6 +49,7 @@ protected:
   // Aircraft characterization (derived)
   double m_max_trip_len;       /** Maximum trip distance (miles) */
   double m_reserve_bat_target; /** Reserve battery capacity target (kWh) */
+  double m_charge_per_hour;    /** kWh gained per hour of charging */
 
   // Simulation parameters
   double m_sim_total_miles_flown; /** Total miles flown in a run */
@@ -77,6 +78,8 @@ public:
   void start_trip(int passengers, double distance);
 
   void fly(double duration_ms);
+
+  void charge(double duration_ms);
 
   double calculate_trip_energy(double distance);
 
@@ -116,6 +119,7 @@ public:
     m_max_passenger_cnt = 4;
     m_p_fault_hourly = 0.25;
 
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
     m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;
@@ -133,6 +137,7 @@ public:
     m_max_passenger_cnt = 5;
     m_p_fault_hourly = 0.10;
 
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
     m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;
@@ -150,6 +155,7 @@ public:
     m_max_passenger_cnt = 3;
     m_p_fault_hourly = 0.05;
 
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
     m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;
@@ -167,6 +173,7 @@ public:
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.22;
 
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
     m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;

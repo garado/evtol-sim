@@ -31,6 +31,7 @@ void Aircraft::run(double duration_ms) {
   } else if (MODE__FLYING == m_sim_mode) {
     fly(duration_ms);
   } else if (MODE__CHARGING == m_sim_mode) {
+    charge(duration_ms);
   } else if (MODE__WAITING_TO_CHARGE == m_sim_mode) {
   }
 }
@@ -69,5 +70,23 @@ void Aircraft::fly(double duration_ms) {
     m_sim_rem_energy -= capacity_used;
     m_sim_miles_traveled += miles_traveled;
     m_sim_total_miles_flown += miles_traveled;
+  }
+}
+
+/**
+ * @class Aircraft
+ * @brief Charge
+ */
+void Aircraft::charge(double duration_ms) {
+  double amount_charged = (duration_ms / MS_PER_HOUR) * m_charge_per_hour;
+
+  if ((m_sim_rem_energy + amount_charged) > m_max_battery_cap) {
+    m_sim_rem_energy = m_max_battery_cap;
+  } else {
+    m_sim_rem_energy += amount_charged;
+  }
+
+  if (m_sim_rem_energy == m_max_battery_cap) {
+    m_sim_mode = MODE__IDLE;
   }
 }
