@@ -15,7 +15,10 @@ public:
 
   void simulate(int simtime_ms);
   void update_aircraft(Aircraft *vehicle);
-  void report();
+
+  void report_mode_results();
+
+  void report_step(Aircraft *vehicle);
 
   // Getters/setters
   void set_step(int step_ms) { m_step_ms = step_ms; };
@@ -26,6 +29,8 @@ private:
   int m_charger_count = 3;  /** Number of available chargers */
   int m_num_chargers_in_use = 0; /** Number of chargers actively being used */
   Aircraft m_vehicles[20];       /** Vehicles being simulated */
+
+  int m_ticks = 0;
 };
 
 #endif /* __SIMULATOR_H__ */

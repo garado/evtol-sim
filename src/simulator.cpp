@@ -60,7 +60,10 @@ void Simulator::simulate(int duration_ms) {
 
     for (int i = 0; i < m_vehicle_count; i++) {
       update_aircraft(&m_vehicles[i]);
+      report_step(&m_vehicles[i]);
     }
+
+    m_ticks++;
   }
 }
 
@@ -70,14 +73,6 @@ void Simulator::simulate(int duration_ms) {
  * @param index Index of vehicle in m_vehicles
  */
 void Simulator::update_aircraft(Aircraft *vehicle) {
-  // Reporting
-  std::cout << std::fixed << std::setprecision(5) << "["
-            << aircraft_type_str[vehicle->get_type()] << "] "
-            << aircraft_mode_str[vehicle->get_mode()]
-            << " (rem: " << vehicle->get_rem_energy()
-            << "; trip: " << vehicle->get_rem_trip_len() << "/"
-            << vehicle->get_trip_len() << ")" << std::endl;
-
   vehicle->run(m_step_ms);
 
   if ((MODE__WAITING_TO_CHARGE == vehicle->get_mode()) &&
@@ -92,8 +87,35 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
 
 /**
  * @class Simulator
- * @brief Output simulation report.
+ * @brief Output CSV report of how long each vehicle spent in each mode.
  */
-void Simulator::report() {
-  std::cout << "Reporting simulation results" << std::endl;
+void Simulator::report_mode_results() {
+  std::cout << "VehicleNumber,VehicleType,Idle,Wait_Chg,Chg_Done,Fly"
+            << std::endl;
+
+  Aircraft *vehicle;
+
+  for (int i = 0; i < m_vehicle_count; i++) {
+    vehicle = &m_vehicles[i];
+    std::cout << i << "," << aircraft_type_str[vehicle->get_type()] << ",";
+
+    for (int j = 0; j < MAX_AIRCRAFT_MODES; j++) {
+      std::cout << (double)vehicle->get_mode_stats()[j] / m_ticks << ",";
+    }
+
+    std::cout << std::endl;
+  }
+}
+
+/**
+ * @class Simulator
+ * @brief Report vehicle stats for a single sim step
+ */
+void Simulator::report_step(Aircraft *vehicle) {
+  std::cout << std::fixed << std::setprecision(5) << "["
+            << aircraft_type_str[vehicle->get_type()] << "] "
+            << aircraft_mode_str[vehicle->get_mode()]
+            << " (rem: " << vehicle->get_rem_energy()
+            << "; trip: " << vehicle->get_rem_trip_len() << "/"
+            << vehicle->get_trip_len() << ")" << std::endl;
 }

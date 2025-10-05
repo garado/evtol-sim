@@ -7,7 +7,7 @@ const char *aircraft_type_str[] = {
 };
 
 const char *aircraft_mode_str[] = {
-    "Idle", "Waiting to charge", "Charge complete", "Charging", "Flying",
+    "IDLE", "WAIT_CHG", "CHG_DONE", "CHG", "FLY",
 };
 
 /**

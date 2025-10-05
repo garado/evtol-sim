@@ -92,8 +92,6 @@ public:
 
   void charge(double duration_ms);
 
-  double calculate_trip_energy(double distance);
-
   // Getters/setters
   double get_rem_energy() { return m_sim_rem_energy; };
 
@@ -117,6 +115,8 @@ public:
   double get_rem_trip_len() { return m_sim_miles_traveled; };
 
   double get_max_trip_len() { return m_max_trip_len; };
+
+  const int *get_mode_stats() { return m_ticks_per_mode; };
 };
 
 class Alpha : public Aircraft {
