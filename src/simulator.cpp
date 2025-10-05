@@ -1,6 +1,7 @@
 
 #include "simulator.hpp"
 #include "aircraft.hpp"
+#include <iomanip>
 #include <iostream>
 
 /**
@@ -38,10 +39,6 @@ Simulator::Simulator(int vehicle_count) {
       break;
     }
   }
-
-  for (int i = 0; i < m_vehicle_count; i++) {
-    std::cout << aircraft_type_str[m_vehicles[i].get_type()] << std::endl;
-  }
 }
 
 /**
@@ -59,7 +56,40 @@ void Simulator::simulate(int duration_ms) {
   std::cout << "Simulating for " << duration_ms << "ms" << std::endl;
 
   for (int time = 0; time < duration_ms; time += m_step_ms) {
+    std::cout << "t = " << time << "ms" << std::endl;
+
+    for (int i = 0; i < m_vehicle_count; i++) {
+      update_aircraft(i);
+    }
   }
+}
+
+/**
+ * @class Simulator
+ * @brief Update state of a single aircraft
+ * @param index Index of vehicle in m_vehicles
+ */
+void Simulator::update_aircraft(int index) {
+  Aircraft *vehicle = &m_vehicles[index];
+
+  if (MODE__IDLE == vehicle->get_mode()) {
+    // Initialize new trip
+    int new_trip_len = rand() % (int)vehicle->get_max_trip_len();
+    vehicle->set_trip_len(new_trip_len);
+  } else if (MODE__FLYING) {
+    vehicle->update(m_step_ms);
+  } else if (MODE__CHARGING) {
+
+  } else if (MODE__WAITING_TO_CHARGE) {
+  }
+
+  // Reporting
+  std::cout << std::setw(2) << std::setfill('0') << index << ". "
+            << "[" << aircraft_type_str[vehicle->get_type()] << "] "
+            << aircraft_mode_str[vehicle->get_mode()]
+            << " (rem: " << vehicle->get_rem_energy()
+            << "; trip: " << vehicle->get_rem_trip_len() << "/"
+            << vehicle->get_trip_len() << ")" << std::endl;
 }
 
 /**

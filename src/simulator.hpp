@@ -14,12 +14,16 @@ public:
   ~Simulator();
 
   void simulate(int simtime_ms);
+  void update_aircraft(int index);
   void report();
 
 private:
   int m_step_ms = 10;       /** Time step interval (ms) */
   int m_vehicle_count = 20; /** Number of vehicles to use in the simulation */
-  Aircraft m_vehicles[20];
+  int m_charger_count = 3;  /** Number of available chargers */
+
+  int m_chargers[3];       /** Chargers being used */
+  Aircraft m_vehicles[20]; /** Vehicles being simulated */
 };
 
 #endif /* __SIMULATOR_H__ */
