@@ -7,10 +7,7 @@ const char *aircraft_type_str[] = {
 };
 
 const char *aircraft_mode_str[] = {
-    "Idle",
-    "Waiting to charge",
-    "Charging",
-    "Flying",
+    "Idle", "Waiting to charge", "Charge complete", "Charging", "Flying",
 };
 
 /**
@@ -85,6 +82,6 @@ void Aircraft::charge(double duration_ms) {
   }
 
   if (m_sim_rem_energy == m_max_battery_cap) {
-    m_sim_mode = MODE__IDLE;
+    m_sim_mode = MODE__CHARGE_COMPLETE;
   }
 }

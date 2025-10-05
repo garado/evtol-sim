@@ -82,7 +82,11 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
 
   if ((MODE__WAITING_TO_CHARGE == vehicle->get_mode()) &&
       (m_num_chargers_in_use < m_charger_count)) {
+    m_num_chargers_in_use++;
     vehicle->set_mode(MODE__CHARGING);
+  } else if (MODE__CHARGE_COMPLETE == vehicle->get_mode()) {
+    m_num_chargers_in_use--;
+    vehicle->set_mode(MODE__IDLE);
   }
 }
 

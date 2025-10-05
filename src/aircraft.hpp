@@ -23,6 +23,7 @@ extern const char *aircraft_type_str[];
 enum AircraftMode {
   MODE__IDLE,
   MODE__WAITING_TO_CHARGE,
+  MODE__CHARGE_COMPLETE,
   MODE__CHARGING,
   MODE__FLYING,
   MAX_AIRCRAFT_MODES,
