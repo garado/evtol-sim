@@ -191,6 +191,7 @@ public:
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.61;
 
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
     m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;
