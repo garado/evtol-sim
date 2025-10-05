@@ -1,8 +1,6 @@
 
 #include "aircraft.hpp"
-#include <iostream>
-
-constexpr int MS_PER_HOUR = 60 * 60 * 1000;
+#include "common.hpp"
 
 const char *aircraft_type_str[] = {
     "Alpha", "Beta", "Charlie", "Delta", "Echo",
