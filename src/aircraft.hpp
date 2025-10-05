@@ -60,6 +60,13 @@ protected:
   double m_sim_miles_traveled; /** Number of miles traveled on current trip */
   int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
 
+  void calculate_custom_params() {
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_reserve_bat_target = m_max_battery_cap * 0.20;
+    m_sim_rem_energy = (double)m_max_battery_cap;
+  }
+
 public:
   Aircraft() {
     m_sim_total_miles_flown = 0.0;
@@ -118,11 +125,7 @@ public:
     m_energy_use_cruise = 1.6;
     m_max_passenger_cnt = 4;
     m_p_fault_hourly = 0.25;
-
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
-    m_sim_rem_energy = (double)m_max_battery_cap;
+    calculate_custom_params();
   }
 };
 
@@ -136,11 +139,7 @@ public:
     m_energy_use_cruise = 1.5;
     m_max_passenger_cnt = 5;
     m_p_fault_hourly = 0.10;
-
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
-    m_sim_rem_energy = (double)m_max_battery_cap;
+    calculate_custom_params();
   }
 };
 
@@ -154,11 +153,7 @@ public:
     m_energy_use_cruise = 2.2;
     m_max_passenger_cnt = 3;
     m_p_fault_hourly = 0.05;
-
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
-    m_sim_rem_energy = (double)m_max_battery_cap;
+    calculate_custom_params();
   }
 };
 
@@ -172,11 +167,7 @@ public:
     m_energy_use_cruise = 0.8;
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.22;
-
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
-    m_sim_rem_energy = (double)m_max_battery_cap;
+    calculate_custom_params();
   }
 };
 
@@ -190,11 +181,7 @@ public:
     m_energy_use_cruise = 5.8;
     m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.61;
-
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
-    m_sim_rem_energy = (double)m_max_battery_cap;
+    calculate_custom_params();
   }
 };
 
