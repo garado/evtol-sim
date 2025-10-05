@@ -3,16 +3,30 @@
 #define __AIRCRAFT_H__
 
 enum AircraftType {
-  ALPHA,
-  BETA,
-  CHARLIE,
-  DELTA,
-  ECHO,
+  TYPE__ALPHA,
+  TYPE__BETA,
+  TYPE__CHARLIE,
+  TYPE__DELTA,
+  TYPE__ECHO,
   MAX_AIRCRAFT_TYPES,
+};
+
+enum AircraftMode {
+  MODE__IDLE,
+  MODE__WAITING_TO_CHARGE,
+  MODE__CHARGING,
+  MODE__FLYING,
+  MAX_AIRCRAFT_MODES,
 };
 
 static const char *aircraft_type_str[] = {
     "Alpha", "Beta", "Charlie", "Delta", "Echo",
+};
+
+static const char *aircraft_mode_str[] = {
+    "Idle",
+    "Charging",
+    "Flying",
 };
 
 /**
@@ -20,90 +34,130 @@ static const char *aircraft_type_str[] = {
  * @brief Represents a vehicle
  */
 class Aircraft {
-public:
-  Aircraft() = default;
-  virtual ~Aircraft() = default;
-
-  void simulate();
-
-  // Getters/setters
-  AircraftType get_type() { return m_aircraft_type; };
-
 protected:
   // Aircraft characterization
   AircraftType m_aircraft_type;
   int m_cruise_speed;         /** Cruise speed (mph) */
-  int m_battery_cap;          /** Battery capacity (kWh) */
+  int m_max_battery_cap;      /** Battery capacity (kWh) */
   double m_charge_time;       /** Time to charge (hours) */
   double m_energy_use_cruise; /** Energy use at cruise (kWh/mile) */
-  int m_passenger_count;      /** Passenger count */
+  int m_max_passenger_cnt;    /** Maximum passenger count */
   double m_p_fault_hourly;    /** Probability of fault per hour */
+  double m_max_trip_len;      /** Maximum trip distance (miles) */
 
   // Simulation parameters
+  double m_sim_total_miles_flown; /** Total miles flown in a run */
+  double m_sim_rem_energy;        /** Remaining battery capacity (kWh) */
+  int m_sim_total_num_faults;     /** Total faults in a run */
+
+  AircraftMode m_sim_mode;     /** Current aircraft mode */
+  int m_sim_trip_len;          /** Trip length (miles) */
+  double m_sim_miles_traveled; /** Number of miles traveled on current trip */
+  int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
+
+public:
+  Aircraft() {
+    m_sim_total_miles_flown = 0.0;
+    m_sim_total_num_faults = 0;
+    m_sim_trip_len = 0.0;
+    m_sim_passenger_cnt = 0;
+    m_sim_mode = MODE__IDLE;
+    m_sim_trip_len = 0.0;
+    m_sim_miles_traveled = 0.0;
+  };
+
+  virtual ~Aircraft() = default;
+
+  void update(double duration_ms);
+
+  // Getters/setters
+  double get_rem_energy() { return m_sim_rem_energy; };
+
+  AircraftType get_type() { return m_aircraft_type; };
+
+  AircraftMode get_mode() { return m_sim_mode; };
+  void set_mode(AircraftMode mode) { m_sim_mode = mode; };
+
+  double get_trip_len() { return m_sim_trip_len; };
+  void set_trip_len(int len) { m_sim_trip_len = len; };
+
+  double get_rem_trip_len() { return m_sim_miles_traveled; };
+
+  double get_max_trip_len() { return m_max_trip_len; };
 };
 
 class Alpha : public Aircraft {
 public:
   Alpha() {
-    m_aircraft_type = ALPHA;
+    m_aircraft_type = TYPE__ALPHA;
     m_cruise_speed = 120;
-    m_battery_cap = 320;
+    m_max_battery_cap = 320;
     m_charge_time = 0.6;
     m_energy_use_cruise = 1.6;
-    m_passenger_count = 4;
+    m_max_passenger_cnt = 4;
     m_p_fault_hourly = 0.25;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_sim_rem_energy = m_max_battery_cap;
   }
 };
 
 class Beta : public Aircraft {
 public:
   Beta() {
-    m_aircraft_type = BETA;
+    m_aircraft_type = TYPE__BETA;
     m_cruise_speed = 100;
-    m_battery_cap = 100;
+    m_max_battery_cap = 100;
     m_charge_time = 0.2;
     m_energy_use_cruise = 1.5;
-    m_passenger_count = 5;
+    m_max_passenger_cnt = 5;
     m_p_fault_hourly = 0.10;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_sim_rem_energy = m_max_battery_cap;
   }
 };
 
 class Charlie : public Aircraft {
 public:
   Charlie() {
-    m_aircraft_type = CHARLIE;
+    m_aircraft_type = TYPE__CHARLIE;
     m_cruise_speed = 160;
-    m_battery_cap = 220;
+    m_max_battery_cap = 220;
     m_charge_time = 0.8;
     m_energy_use_cruise = 2.2;
-    m_passenger_count = 3;
+    m_max_passenger_cnt = 3;
     m_p_fault_hourly = 0.05;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_sim_rem_energy = m_max_battery_cap;
   }
 };
 
 class Delta : public Aircraft {
 public:
   Delta() {
-    m_aircraft_type = DELTA;
+    m_aircraft_type = TYPE__DELTA;
     m_cruise_speed = 90;
-    m_battery_cap = 120;
+    m_max_battery_cap = 120;
     m_charge_time = 0.62;
     m_energy_use_cruise = 0.8;
-    m_passenger_count = 2;
+    m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.22;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_sim_rem_energy = m_max_battery_cap;
   }
 };
 
 class Echo : public Aircraft {
 public:
   Echo() {
-    m_aircraft_type = ECHO;
+    m_aircraft_type = TYPE__ECHO;
     m_cruise_speed = 30;
-    m_battery_cap = 150;
+    m_max_battery_cap = 150;
     m_charge_time = 0.3;
     m_energy_use_cruise = 5.8;
-    m_passenger_count = 2;
+    m_max_passenger_cnt = 2;
     m_p_fault_hourly = 0.61;
+    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
+    m_sim_rem_energy = m_max_battery_cap;
   }
 };
 
