@@ -15,7 +15,6 @@ Simulator::Simulator(int vehicle_count) {
   m_vehicle_count = vehicle_count;
 
   // Initialize random types of vehicles
-  srand(1);
   for (int i = 0; i < m_vehicle_count; i++) {
     int random_num = rand() % 5;
 
@@ -56,10 +55,11 @@ void Simulator::simulate(int duration_ms) {
   std::cout << "Simulating for " << duration_ms << "ms" << std::endl;
 
   for (int time = 0; time < duration_ms; time += m_step_ms) {
+    std::cout << "----------------------" << std::endl;
     std::cout << "t = " << time << "ms" << std::endl;
 
     for (int i = 0; i < m_vehicle_count; i++) {
-      update_aircraft(i);
+      update_aircraft(&m_vehicles[i]);
     }
   }
 }
@@ -69,27 +69,21 @@ void Simulator::simulate(int duration_ms) {
  * @brief Update state of a single aircraft
  * @param index Index of vehicle in m_vehicles
  */
-void Simulator::update_aircraft(int index) {
-  Aircraft *vehicle = &m_vehicles[index];
-
-  if (MODE__IDLE == vehicle->get_mode()) {
-    // Initialize new trip
-    int new_trip_len = rand() % (int)vehicle->get_max_trip_len();
-    vehicle->set_trip_len(new_trip_len);
-  } else if (MODE__FLYING) {
-    vehicle->update(m_step_ms);
-  } else if (MODE__CHARGING) {
-
-  } else if (MODE__WAITING_TO_CHARGE) {
-  }
-
+void Simulator::update_aircraft(Aircraft *vehicle) {
   // Reporting
-  std::cout << std::setw(2) << std::setfill('0') << index << ". "
-            << "[" << aircraft_type_str[vehicle->get_type()] << "] "
+  std::cout << std::fixed << std::setprecision(5) << "["
+            << aircraft_type_str[vehicle->get_type()] << "] "
             << aircraft_mode_str[vehicle->get_mode()]
             << " (rem: " << vehicle->get_rem_energy()
             << "; trip: " << vehicle->get_rem_trip_len() << "/"
             << vehicle->get_trip_len() << ")" << std::endl;
+
+  vehicle->run(m_step_ms);
+
+  if ((MODE__WAITING_TO_CHARGE == vehicle->get_mode()) &&
+      (m_num_chargers_in_use < m_charger_count)) {
+    vehicle->set_mode(MODE__CHARGING);
+  }
 }
 
 /**
