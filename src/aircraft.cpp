@@ -16,6 +16,8 @@ const char *aircraft_mode_str[] = {
  * @param duration_ms
  */
 void Aircraft::run(double duration_ms) {
+  m_ticks_per_mode[m_sim_mode]++;
+
   if (MODE__IDLE == m_sim_mode) {
     if (m_sim_rem_energy <= m_reserve_bat_target) {
       m_sim_mode = MODE__WAITING_TO_CHARGE;

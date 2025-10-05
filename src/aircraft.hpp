@@ -61,6 +61,9 @@ protected:
   double m_sim_miles_traveled; /** Number of miles traveled on current trip */
   int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
 
+  /** Track time spent per mode */
+  int m_ticks_per_mode[MAX_AIRCRAFT_MODES] = {0};
+
   void calculate_custom_params() {
     m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
