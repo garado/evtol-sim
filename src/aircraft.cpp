@@ -124,7 +124,7 @@ void Aircraft::charge(double duration_ms) {
     m_sim_rem_energy += amount_charged;
   }
 
-  if (m_sim_rem_energy == m_max_battery_cap) {
+  if (m_sim_rem_energy >= m_max_battery_cap) {
     m_sim_mode = MODE__CHARGE_COMPLETE;
   }
 }
