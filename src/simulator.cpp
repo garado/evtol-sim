@@ -151,7 +151,7 @@ void Simulator::charge_next_aircraft() {
  * @brief Output CSV report of how long each vehicle spent in each mode.
  */
 void Simulator::report_time_per_mode() {
-  std::cout << "VehicleNumber,VehicleType,Idle,Wait_Chg,Chg_Done,Fly"
+  std::cout << "VehicleNumber,VehicleType,Idle,Wait_Chg,Chg_Done,Chg,Fly"
             << std::endl;
 
   Aircraft *vehicle;
