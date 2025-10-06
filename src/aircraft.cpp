@@ -56,17 +56,17 @@ void Aircraft::fly(double duration_ms) {
 
   if (capacity_used > m_sim_rem_energy) {
     // @TODO Not enough battery to travel this duration (this shouldn't happen)
-  } else if ((m_sim_miles_traveled + miles_traveled) >= m_sim_trip_len) {
-    // The trip is done
-    m_sim_mode = MODE__IDLE;
-    m_sim_rem_energy -= capacity_used;
-    m_sim_miles_traveled += miles_traveled;
-    m_sim_total_miles_flown += miles_traveled;
   } else {
-    // Trip still in progress
     m_sim_rem_energy -= capacity_used;
     m_sim_miles_traveled += miles_traveled;
-    m_sim_total_miles_flown += miles_traveled;
+    m_sim_total_passenger_mi += miles_traveled * m_sim_passenger_cnt;
+
+    if ((m_sim_miles_traveled + miles_traveled) >= m_sim_trip_len) {
+      // The trip is done
+      m_sim_mode = MODE__IDLE;
+    } else {
+      // Trip still in progress
+    }
   }
 }
 

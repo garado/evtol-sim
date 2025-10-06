@@ -53,11 +53,11 @@ protected:
   double m_charge_per_hour;    /** kWh gained per hour of charging */
 
   // Simulation parameters
-  double m_sim_total_miles_flown; /** Total miles flown in a run */
-  double m_sim_rem_energy;        /** Remaining battery capacity (kWh) */
-  int m_sim_total_num_faults;     /** Total faults in a run */
-  AircraftMode m_sim_mode;        /** Current aircraft mode */
-  double m_sim_trip_len;          /** Trip length (miles) */
+  double m_sim_total_passenger_mi; /** Total passenger miles flown */
+  double m_sim_rem_energy;         /** Remaining battery capacity (kWh) */
+  int m_sim_total_num_faults;      /** Total faults in a run */
+  AircraftMode m_sim_mode;         /** Current aircraft mode */
+  double m_sim_trip_len;           /** Trip length (miles) */
   double m_sim_miles_traveled; /** Number of miles traveled on current trip */
   int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
 
@@ -73,7 +73,7 @@ protected:
 
 public:
   Aircraft() {
-    m_sim_total_miles_flown = 0.0;
+    m_sim_total_passenger_mi = 0.0;
     m_sim_total_num_faults = 0;
     m_sim_trip_len = 0.0;
     m_sim_passenger_cnt = 0;
