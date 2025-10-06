@@ -28,7 +28,12 @@
  * Initializes `m_vehicle_count` random aircraft.
  */
 Simulator::Simulator(int vehicle_count) {
+  if (vehicle_count > MAX_VEHICLES) {
+    vehicle_count = MAX_VEHICLES;
+  }
+
   m_vehicle_count = vehicle_count;
+
   memset(m_type_stats, 0, sizeof(m_type_stats));
 
   // Initialize random types of vehicles
@@ -195,7 +200,7 @@ void Simulator::report_vehicle_type_stats() {
     int total_faults = 0;
     int total_passenger_miles = 0;
 
-    for (int j_vehicle = 0; j_vehicle < 20; j_vehicle++) {
+    for (int j_vehicle = 0; j_vehicle < m_vehicle_count; j_vehicle++) {
       if (i_type == m_vehicles[j_vehicle].m_type) {
         vehicle_count++;
         total_passenger_miles += m_vehicles[j_vehicle].m_sim_total_passenger_mi;

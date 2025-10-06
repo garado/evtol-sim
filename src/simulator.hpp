@@ -26,6 +26,13 @@ typedef struct type_stats_t {
 } type_stats_t;
 
 /*****************************************************************
+ * Constants
+ *****************************************************************/
+
+constexpr int MAX_VEHICLES = 20;
+constexpr int MAX_CHARGERS = 3;
+
+/*****************************************************************
  * Class definition
  *****************************************************************/
 
@@ -75,11 +82,11 @@ public:
   int m_step_ms = 10; /** Time step interval (ms) */
 
 private:
-  int m_vehicle_count = 20; /** Number of vehicles to use in the simulation */
-  int m_charger_count = 3;  /** Number of available chargers */
-  int m_num_chargers_in_use = 0; /** Number of chargers actively being used */
-  Aircraft m_vehicles[20];       /** Vehicles being simulated */
-  int m_ticks = 0;
+  int m_vehicle_count = MAX_VEHICLES; /** Vehicles to use in simulation */
+  int m_charger_count = MAX_CHARGERS; /** Available chargers */
+  int m_num_chargers_in_use = 0;      /** Chargers actively being used */
+  Aircraft m_vehicles[MAX_VEHICLES];  /** Data for simulated vehicles */
+  int m_ticks = 0;                    /** Total elapsed simulation ticks */
   type_stats_t m_type_stats[MAX_AIRCRAFT_TYPES];
 
   void charge_next_aircraft();

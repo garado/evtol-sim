@@ -7,6 +7,12 @@
 #define __AIRCRAFT_H__
 
 /*****************************************************************
+ * Includes
+ *****************************************************************/
+
+#include <cstring>
+
+/*****************************************************************
  * Enums and structs
  *****************************************************************/
 
@@ -63,9 +69,8 @@ public:
   double m_p_fault_hourly;    /** Probability of fault per hour */
 
   // Aircraft characterization (derived) -----------------------------------
-  double m_max_trip_len;       /** Maximum trip distance (miles) */
-  double m_reserve_bat_target; /** Reserve battery capacity target (kWh) */
-  double m_charge_per_hour;    /** kWh gained per hour of charging */
+  double m_max_trip_len;    /** Maximum trip distance (miles) */
+  double m_charge_per_hour; /** kWh gained per hour of charging */
 
   // General simulation parameters -----------------------------------------
   AircraftMode m_sim_mode;              /** Current aircraft mode */
@@ -85,11 +90,11 @@ public:
   void calculate_custom_params() {
     m_charge_per_hour = m_max_battery_cap / m_charge_time;
     m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_reserve_bat_target = m_max_battery_cap * 0.20;
     m_sim_rem_energy = (double)m_max_battery_cap;
   }
 
   Aircraft() {
+    memset(m_mode_ticks, 0, sizeof(m_mode_ticks));
     m_sim_total_passenger_mi = 0.0;
     m_sim_total_num_faults = 0;
     m_sim_trip_len = 0.0;

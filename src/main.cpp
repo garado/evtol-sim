@@ -29,8 +29,8 @@ int main() {
   sim.m_step_ms = SIM_STEP_MS;
   sim.simulate(SIM_DURATION_MIN * MIN_TO_MS);
 
-  // sim.report_mode_results();
-  sim.report_vehicle_type_stats();
+  sim.report_time_per_mode();
+  // sim.report_vehicle_type_stats();
 
   return 0;
 }
