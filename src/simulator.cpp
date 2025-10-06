@@ -35,12 +35,9 @@ Simulator::Simulator(int vehicle_count) {
 
   m_vehicle_count = vehicle_count;
 
-  memset(m_type_stats, 0, sizeof(m_type_stats));
-
   // Initialize random types of vehicles
   for (int i = 0; i < m_vehicle_count; i++) {
     AircraftType random_type = (AircraftType)(rand() % MAX_AIRCRAFT_TYPES);
-    m_type_stats[random_type].type_count++;
 
     switch (random_type) {
     case TYPE__ALPHA:

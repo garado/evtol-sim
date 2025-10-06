@@ -89,8 +89,11 @@ private:
   int m_num_chargers_in_use = 0;      /** Chargers actively being used */
   Aircraft m_vehicles[MAX_VEHICLES];  /** Data for simulated vehicles */
   int m_ticks = 0;                    /** Total elapsed simulation ticks */
-  type_stats_t m_type_stats[MAX_AIRCRAFT_TYPES];
 
+  /**
+   * @class Simulator
+   * @brief Find the next aircraft to charge, and charge it. FIFO waiting queue.
+   */
   void charge_next_aircraft();
 };
 
