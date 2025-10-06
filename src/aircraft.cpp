@@ -87,18 +87,19 @@ void Aircraft::fly(double duration_ms) {
   double capacity_used = m_energy_use_cruise * m_cruise_speed *
                          (duration_ms / (double)MS_PER_HOUR);
 
-  double miles_traveled = m_cruise_speed * (duration_ms / (double)MS_PER_HOUR);
-
   if (capacity_used > m_sim_rem_energy) {
+    // Not enough battery to run for entire time step
     m_sim_mode = MODE__WAITING_TO_CHARGE;
-
-    // Handle partial trip
     double partial_miles = m_sim_rem_energy / m_energy_use_cruise;
     m_sim_trip_miles_elapsed += partial_miles;
     m_sim_total_miles += partial_miles;
     m_sim_total_passenger_mi += partial_miles * m_sim_trip_passenger_cnt;
     m_sim_rem_energy = 0;
   } else {
+    // Enough battery to run for entire time step
+    double miles_traveled =
+        m_cruise_speed * (duration_ms / (double)MS_PER_HOUR);
+
     if ((m_sim_trip_miles_elapsed + miles_traveled) >= m_sim_trip_len) {
       m_sim_mode = MODE__IDLE; // Trip complete
     }

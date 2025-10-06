@@ -56,6 +56,11 @@ extern const char *aircraft_mode_str[];
  *
  * This is the base class; each of the specified aircraft types inherits from
  * this one, and updates the aircraft characterization vars accordingly.
+ *
+ * Lots of things public because there's tight coupling between this class
+ * and Simulator class for reporting purposes. Getters/setters would provide
+ * better encapsulation but didn't want to write 10000 of them. So they are just
+ * public.
  */
 class Aircraft {
 public:
@@ -96,7 +101,6 @@ public:
     m_sim_trip_len = 0.0;
     m_sim_trip_passenger_cnt = 0;
     m_sim_mode = MODE__IDLE;
-    m_sim_trip_len = 0.0;
     m_sim_trip_miles_elapsed = 0.0;
     m_sim_ticks_waiting_chg = 0;
     m_sim_trips_started = 0;
@@ -136,6 +140,7 @@ public:
    */
   void charge(double duration_ms);
 
+protected:
   /**
    * @class Aircraft
    * @brief Calculate derived parameters from the given per-vehicle-type

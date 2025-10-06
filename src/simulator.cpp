@@ -21,7 +21,7 @@
  * Macros
  *****************************************************************/
 
-/** @brief Show vehicle statistics */
+/** @brief Show statistics for all vehicles at every sim step */
 #define DEBUG_SIM_STEP (false)
 
 /*****************************************************************
@@ -127,7 +127,7 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
   } else if (MODE__CHARGE_COMPLETE == vehicle->m_sim_mode) {
     m_num_chargers_in_use--;
     vehicle->m_sim_mode = MODE__IDLE;
-    charge_next_aircraft();
+    allocate_charger_fifo();
   }
 }
 
@@ -135,7 +135,7 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
  * @class Simulator
  * @brief Find the next aircraft to charge, and charge it. FIFO waiting queue.
  */
-void Simulator::charge_next_aircraft() {
+void Simulator::allocate_charger_fifo() {
   if (m_num_chargers_in_use >= m_charger_count) {
     return;
   }
@@ -165,6 +165,7 @@ void Simulator::charge_next_aircraft() {
  * @brief Output CSV report of how long each vehicle spent in each mode.
  */
 void Simulator::report_time_per_mode() {
+  // CSV header
   std::cout << "VehicleNumber,VehicleType,Idle,Wait_Chg,Chg_Done,Chg,Fly"
             << std::endl;
 
@@ -186,6 +187,9 @@ void Simulator::report_time_per_mode() {
  * @class Simulator
  * @brief Report human-readable vehicle stats for a single timestep of the
  * simulation. Mostly for debugging.
+ *
+ * Sample output:
+ * [Delta] CHG (rem: 108.87097; trip: 0.00000/150.00000)
  */
 void Simulator::report_step(Aircraft *vehicle) {
   std::cout << std::fixed << std::setprecision(5) << "["
@@ -202,24 +206,26 @@ void Simulator::report_step(Aircraft *vehicle) {
  * problem description.
  */
 void Simulator::report_vehicle_type_stats() {
+  // CSV header
   std::cout
       << "VehicleType,VehicleCount,FlightTimePerFlight(Hours),DistPerFlight,"
          "ChgSessionTime,"
          "TotalFaults,TotalPassengerMiles"
       << std::endl;
 
+  // Collect vehicle statistics to use in report calculations
   for (int i_type = 0; i_type < MAX_AIRCRAFT_TYPES; i_type++) {
     std::cout << aircraft_type_str[i_type] << ",";
 
     // Aggregate these statistics for each vehicle of this type
     int vehicle_count = 0;
     double total_flight_time = 0.0;
-    int total_num_flights = 0;
     double total_flight_distance = 0.0;
+    int total_num_flights = 0;
     double total_chg_time = 0.0;
+    int total_chg_sessions = 0;
     int total_faults = 0;
     int total_passenger_miles = 0;
-    int total_chg_sessions = 0;
 
     for (int j_vehicle = 0; j_vehicle < m_vehicle_count; j_vehicle++) {
       Aircraft *vehicle = &m_vehicles[j_vehicle];
@@ -240,6 +246,7 @@ void Simulator::report_vehicle_type_stats() {
       }
     }
 
+    // Finally calculate the necessary statistics
     double avg_flight_time;
     double avg_flight_dist;
     double avg_chg_time;

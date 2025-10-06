@@ -11,20 +11,6 @@
  *****************************************************************/
 
 #include "aircraft.hpp"
-#include "common.hpp"
-
-/*****************************************************************
- * Enums and structs
- *****************************************************************/
-
-typedef struct type_stats_t {
-  int type_count;
-  double flight_time_per_flight;
-  double dist_per_flight;
-  double chg_session_time;
-  int num_faults;
-  double passenger_mi;
-} type_stats_t;
 
 /*****************************************************************
  * Constants
@@ -84,15 +70,26 @@ private:
   int m_vehicle_count = MAX_VEHICLES; /** Vehicles to use in simulation */
   int m_charger_count = MAX_CHARGERS; /** Available chargers */
   int m_num_chargers_in_use = 0;      /** Chargers actively being used */
-  Aircraft m_vehicles[MAX_VEHICLES];  /** Data for simulated vehicles */
   int m_ticks = 0;                    /** Total elapsed simulation ticks */
   int m_step_ms = 100;                /** Time step interval (ms) */
+
+  /** Data for simulated vehicles.
+   * @note This is slicing, but the simulation still works as intended
+   * because the derived classes do not have any data/custom behavior of their
+   * own, and just update base class variables. This would need to be fixed if
+   * this were not the case.
+   *
+   * I don't particularly want to refactor everything right now.
+   * But the correct thing to do would be:
+   * std::unique_ptr<Aircraft> m_vehicles[MAX_VEHICLES];
+   **/
+  Aircraft m_vehicles[MAX_VEHICLES];
 
   /**
    * @class Simulator
    * @brief Find the next aircraft to charge, and charge it. FIFO waiting queue.
    */
-  void charge_next_aircraft();
+  void allocate_charger_fifo();
 };
 
 #endif /* SIMULATOR_H */
