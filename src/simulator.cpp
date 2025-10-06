@@ -197,6 +197,7 @@ void Simulator::report_vehicle_type_stats() {
   for (int i_type = 0; i_type < MAX_AIRCRAFT_TYPES; i_type++) {
     std::cout << aircraft_type_str[i_type] << ",";
 
+    // Aggregate these statistics for each vehicle of this type
     int vehicle_count = 0;
     double total_flight_time = 0.0;
     int total_num_flights = 0;
@@ -209,7 +210,6 @@ void Simulator::report_vehicle_type_stats() {
     for (int j_vehicle = 0; j_vehicle < m_vehicle_count; j_vehicle++) {
       Aircraft *vehicle = &m_vehicles[j_vehicle];
 
-      // Aggregate statistics for each vehicle of this type
       if (i_type == vehicle->m_type) {
         vehicle_count++;
         total_passenger_miles += vehicle->m_sim_total_passenger_mi;

@@ -70,6 +70,13 @@ void Aircraft::fly(double duration_ms) {
 
   if (capacity_used > m_sim_rem_energy) {
     m_sim_mode = MODE__WAITING_TO_CHARGE;
+
+    // Handle partial trip
+    double partial_miles = m_sim_rem_energy / m_energy_use_cruise;
+    m_sim_trip_miles_elapsed += partial_miles;
+    m_sim_total_miles += partial_miles;
+    m_sim_total_passenger_mi += partial_miles * m_sim_trip_passenger_cnt;
+    m_sim_rem_energy = 0;
   } else {
     if ((m_sim_trip_miles_elapsed + miles_traveled) >= m_sim_trip_len) {
       m_sim_mode = MODE__IDLE; // Trip complete
