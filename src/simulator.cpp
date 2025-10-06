@@ -100,7 +100,7 @@ void Simulator::simulate(int duration_ms) {
  */
 void Simulator::update_aircraft(Aircraft *vehicle) {
   vehicle->m_mode_ticks[vehicle->m_sim_mode]++;
-  vehicle->fault_chance(m_step_ms);
+  vehicle->roll_for_fault(m_step_ms);
 
   // State machine for aircraft
   if (MODE__IDLE == vehicle->m_sim_mode) {

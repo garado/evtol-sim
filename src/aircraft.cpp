@@ -67,10 +67,10 @@ void Aircraft::start_trip(int passengers, double distance) {
 
 /**
  * @class Aircraft
- * @brief Calculate fault chance.
+ * @brief Simulate probability of fault occurring.
  * @param duration_ms The duration for which to calculate the fault probability.
  */
-void Aircraft::fault_chance(double duration_ms) {
+void Aircraft::roll_for_fault(double duration_ms) {
   double fault_prob = (duration_ms / MS_PER_HOUR) * m_p_fault_hourly;
 
   if ((double)rand() / RAND_MAX < fault_prob) {

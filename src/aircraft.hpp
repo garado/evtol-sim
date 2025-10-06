@@ -123,11 +123,11 @@ public:
 
   /**
    * @class Aircraft
-   * @brief Calculate fault chance.
+   * @brief Simulate probability of fault occurring.
    * @param duration_ms The duration for which to calculate the fault
    * probability.
    */
-  void fault_chance(double duration_ms);
+  void roll_for_fault(double duration_ms);
 
   /**
    * @class Aircraft
