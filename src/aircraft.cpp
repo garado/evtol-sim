@@ -19,7 +19,7 @@
  *****************************************************************/
 
 const char *aircraft_type_str[] = {
-    "Alpha", "Beta", "Charlie", "Delta", "Echo",
+    "Alpha", "Bravo", "Charlie", "Delta", "Echo",
 };
 
 const char *aircraft_mode_str[] = {
@@ -40,6 +40,7 @@ void Aircraft::start_trip(int passengers, double distance) {
   m_sim_trip_passenger_cnt = passengers;
   m_sim_trip_len = distance;
   m_sim_trip_miles_elapsed = 0;
+  m_sim_trips_started++;
   m_sim_mode = MODE__FLYING;
 }
 
@@ -67,8 +68,6 @@ void Aircraft::fly(double duration_ms) {
 
   double miles_traveled = m_cruise_speed * (duration_ms / (double)MS_PER_HOUR);
 
-  m_sim_trip_flight_time_ms += duration_ms;
-
   if (capacity_used > m_sim_rem_energy) {
     m_sim_mode = MODE__WAITING_TO_CHARGE;
   } else {
@@ -79,6 +78,7 @@ void Aircraft::fly(double duration_ms) {
     m_sim_rem_energy -= capacity_used;
     m_sim_trip_miles_elapsed += miles_traveled;
     m_sim_total_passenger_mi += miles_traveled * m_sim_trip_passenger_cnt;
+    m_sim_total_miles += miles_traveled;
   }
 }
 

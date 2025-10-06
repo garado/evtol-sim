@@ -12,6 +12,7 @@
 
 #include "simulator.hpp"
 #include "aircraft.hpp"
+#include "common.hpp"
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -45,8 +46,8 @@ Simulator::Simulator(int vehicle_count) {
     case TYPE__ALPHA:
       m_vehicles[i] = Alpha();
       break;
-    case TYPE__BETA:
-      m_vehicles[i] = Beta();
+    case TYPE__BRAVO:
+      m_vehicles[i] = Bravo();
       break;
     case TYPE__CHARLIE:
       m_vehicles[i] = Charlie();
@@ -109,6 +110,7 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
   } else if (MODE__WAITING_TO_CHARGE == vehicle->m_sim_mode) {
     if (m_num_chargers_in_use < m_charger_count) {
       m_num_chargers_in_use++;
+      vehicle->m_sim_charging_sessions++;
       vehicle->m_sim_mode = MODE__CHARGING;
     } else {
       vehicle->m_sim_ticks_waiting_chg++;
@@ -139,6 +141,7 @@ void Simulator::charge_next_aircraft() {
 
   if (longest_wait_index > -1) {
     m_num_chargers_in_use++;
+    m_vehicles[longest_wait_index].m_sim_charging_sessions++;
     m_vehicles[longest_wait_index].m_sim_mode = MODE__CHARGING;
   }
 }
@@ -185,33 +188,68 @@ void Simulator::report_step(Aircraft *vehicle) {
  * problem description.
  */
 void Simulator::report_vehicle_type_stats() {
-  std::cout << "VehicleType,VehicleCount,FlightTimePerFlight,DistPerFlight,"
-               "ChgSessionTime,"
-               "TotalFaults,TotalPassengerMiles"
-            << std::endl;
+  std::cout
+      << "VehicleType,VehicleCount,FlightTimePerFlight(Hours),DistPerFlight,"
+         "ChgSessionTime,"
+         "TotalFaults,TotalPassengerMiles"
+      << std::endl;
 
   for (int i_type = 0; i_type < MAX_AIRCRAFT_TYPES; i_type++) {
     std::cout << aircraft_type_str[i_type] << ",";
 
     int vehicle_count = 0;
-    double flight_time = 0.0;
-    double distance_per_flight = 0.0;
-    double chg_session_time = 0.0;
+    double total_flight_time = 0.0;
+    int total_num_flights = 0;
+    double total_flight_distance = 0.0;
+    double total_chg_time = 0.0;
     int total_faults = 0;
     int total_passenger_miles = 0;
+    int total_chg_sessions = 0;
 
     for (int j_vehicle = 0; j_vehicle < m_vehicle_count; j_vehicle++) {
-      if (i_type == m_vehicles[j_vehicle].m_type) {
+      Aircraft *vehicle = &m_vehicles[j_vehicle];
+
+      // Aggregate statistics for each vehicle of this type
+      if (i_type == vehicle->m_type) {
         vehicle_count++;
-        total_passenger_miles += m_vehicles[j_vehicle].m_sim_total_passenger_mi;
-        total_faults += m_vehicles[j_vehicle].m_sim_total_num_faults;
+        total_passenger_miles += vehicle->m_sim_total_passenger_mi;
+        total_faults += vehicle->m_sim_total_num_faults;
+        total_num_flights += vehicle->m_sim_trips_started;
+        total_flight_distance += vehicle->m_sim_total_miles;
+        total_chg_sessions += vehicle->m_sim_charging_sessions;
+
+        total_flight_time += (vehicle->m_mode_ticks[MODE__FLYING] * m_step_ms) /
+                             (double)MS_PER_HOUR;
+
+        total_chg_time += (vehicle->m_mode_ticks[MODE__CHARGING] * m_step_ms) /
+                          (double)MS_PER_HOUR;
       }
     }
 
-    std::cout << vehicle_count << "," << flight_time / vehicle_count << ","
-              << distance_per_flight / vehicle_count << ","
-              << chg_session_time / vehicle_count << ","
-              << total_faults / vehicle_count << "," << total_passenger_miles
-              << std::endl;
+    double avg_flight_time;
+    double avg_flight_dist;
+    double avg_chg_time;
+
+    if (total_num_flights > 0) {
+      avg_flight_time = total_flight_time / (double)total_num_flights;
+    } else {
+      avg_flight_time = 0;
+    }
+
+    if (total_num_flights > 0) {
+      avg_flight_dist = total_flight_distance / (double)total_num_flights;
+    } else {
+      avg_flight_dist = 0;
+    }
+
+    if (total_chg_sessions > 0) {
+      avg_chg_time = total_chg_time / (double)total_chg_sessions;
+    } else {
+      avg_chg_time = 0;
+    }
+
+    std::cout << vehicle_count << "," << avg_flight_time << ","
+              << avg_flight_dist << "," << avg_chg_time << "," << total_faults
+              << "," << total_passenger_miles << std::endl;
   }
 }

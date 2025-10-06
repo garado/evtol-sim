@@ -65,6 +65,8 @@ public:
    */
   void report_time_per_mode();
 
+  void update_vehicle_type_stats();
+
   /**
    * @class Simulator
    * @brief Output CSV report of aggregate vehicle type statistics, per the

@@ -19,7 +19,7 @@
 /** @brief Enumerate the different types of aircraft. */
 enum AircraftType {
   TYPE__ALPHA,
-  TYPE__BETA,
+  TYPE__BRAVO,
   TYPE__CHARLIE,
   TYPE__DELTA,
   TYPE__ECHO,
@@ -75,17 +75,19 @@ public:
   // General simulation parameters -----------------------------------------
   AircraftMode m_sim_mode;              /** Current aircraft mode */
   int m_mode_ticks[MAX_AIRCRAFT_MODES]; /** Ticks spent per mode */
+  double m_sim_total_miles;             /** Total miles flown (entire sim) */
   double m_sim_total_passenger_mi; /** Passenger miles flown (entire sim) */
   int m_sim_total_num_faults;      /** Total faults (entire sim) */
   double m_sim_rem_energy;         /** Remaining battery capacity (kWh) */
   int m_sim_ticks_waiting_chg;     /** Ticks spent waiting to charge (for
                                       FIFO charger allocation) */
+  int m_sim_trips_started;         /** Number of trips started */
+  int m_sim_charging_sessions;     /** Number of charging sessions */
 
   // Per-trip simulation parameters ----------------------------------------
-  double m_sim_trip_len;            /** Trip length (mi) */
-  double m_sim_trip_miles_elapsed;  /** Miles traveled on current trip */
-  int m_sim_trip_passenger_cnt;     /** Passengers for current trip */
-  double m_sim_trip_flight_time_ms; /** Flight time for current trip (ms) */
+  double m_sim_trip_len;           /** Trip length (mi) */
+  double m_sim_trip_miles_elapsed; /** Miles traveled on current trip */
+  int m_sim_trip_passenger_cnt;    /** Passengers for current trip */
 
   void calculate_custom_params() {
     m_charge_per_hour = m_max_battery_cap / m_charge_time;
@@ -103,7 +105,9 @@ public:
     m_sim_trip_len = 0.0;
     m_sim_trip_miles_elapsed = 0.0;
     m_sim_ticks_waiting_chg = 0;
-    m_sim_trip_flight_time_ms = 0.0;
+    m_sim_trips_started = 0;
+    m_sim_total_miles = 0.0;
+    m_sim_charging_sessions = 0;
   };
 
   virtual ~Aircraft() = default;
@@ -158,13 +162,13 @@ public:
 };
 
 /**
- * @class Beta
- * @brief Characteristics for Beta type aircraft.
+ * @class Bravo
+ * @brief Characteristics for Bravo type aircraft.
  */
-class Beta : public Aircraft {
+class Bravo : public Aircraft {
 public:
-  Beta() {
-    m_type = TYPE__BETA;
+  Bravo() {
+    m_type = TYPE__BRAVO;
     m_cruise_speed = 100;
     m_max_battery_cap = 100;
     m_charge_time = 0.2;
