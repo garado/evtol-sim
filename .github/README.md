@@ -40,7 +40,7 @@ There are a few small samples in `tests/` demonstrating usage of `gtest` for mor
 ## Assumptions made
 - **Faults are for every mode, not just flight.** Given that the probability is so vague (and seems quite high per hour) this is a justifiable assumption. See comment below about more descriptive fault behavior.
 - **Faults are largely non-critical, so they don't affect operation in this simulation.** Probability is far too high for it to be a critical fault requiring immediate landing/taking out of the sim (10^-9 probability of fault per hour for catastrophic failures).
-- **All trips use maximum passengers and maximum trip distance.** Makes the simulation simpler but reduces realism. It also makes for an easy sanity check - I can validate the CSV output against the given aircraft characteristics (e.g. `average flight time = max_trip_distance / cruise_speed`).
+- **All trips use maximum passengers and maximum trip distance.** Makes the simulation simpler but reduces realism. It also makes for an easy sanity check - I can validate the CSV output against the given aircraft characteristics (e.g. `average flight time = max trip distance / cruise_speed`, `average distance per flight = given battery capacity / given energy use at cruise`).
 
 ## How to make it better
 - **More descriptive parameters** - each aircraft in reality would have unique battery characteristics (charge/discharge curves), takeoff/landing behavior, aerodynamic profiles, etc. A more accurate sim would address these - for example, having separate `battery_discharge()`, `battery_charge()` methods for each aircraft.
