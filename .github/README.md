@@ -1,5 +1,5 @@
 
-# Joby take-home
+# eVTOL simulator
 
 ## Implementation
 
