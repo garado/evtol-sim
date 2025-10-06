@@ -7,7 +7,9 @@ The `Aircraft` class is a base class containing operational characteristics, sim
 
 The `Simulator` class controls the fleet, manages the charging queue, and generates various types of reports.
 
-Each timestep in the simulation runs the following state machine for each aircraft. The blue arrows in the state machine represent transitions initiated by the simulator. Yellow arrows indicate transitions initiated by the aircraft itself.
+Each timestep in the simulation runs the following state machine for each aircraft. The blue arrows in the state machine represent transitions initiated by the simulator, and Yellow arrows indicate transitions initiated by the aircraft itself.
+
+Note: the state machine implementation is in the `Simulator` because the majority of the transitions were initiated by the `Simulator`, and it was easier during dev. It's more correct to put the state machine implementation in the `Aircraft` class so they can have their custom states, but I don't want to refactor now.
 
 ![State diagram](state_diagram.png)
 
@@ -17,7 +19,7 @@ The chargers are implemented as a FIFO queue - the first in line/longest waiting
 
 The simulator generates three types of reports.
 
-1. **Mode distribution** - reports percentage of time that each aircraft type is in each mode.
+1. **Mode distribution** - reports percentage of time that each aircraft is in each mode. Keeping track of mode stats makes calculating per-type stats easy.
 2. **Step stats** - reports per-vehicle statistics for a single timestep in the simulation. Most useful for debugging.
 3. **Per-type stats** - as requested in the problem description.
 
@@ -36,7 +38,8 @@ There are a few small samples in `tests/` demonstrating usage of `gtest` for mor
 - Change `srand()` seed in `main.cpp` for a new, unique sim
 
 ## Assumptions made
-- **Faults are for every mode, not just flight.**
+- **Faults are for every mode, not just flight.** Given that the probability is so vague (and seems quite high per hour) this is a justifiable assumption. See comment below about more descriptive fault behavior.
+- **Faults are largely non-critical, so they don't affect operation in this simulation.** Probability is far too high for it to be a critical fault requiring immediate landing/taking out of the sim (10^-9 probability of fault per hour for catastrophic failures).
 - **All trips use maximum passengers and maximum trip distance.** Makes the simulation simpler but reduces realism. A more sophisticated model would vary these parameters.
 
 ## Future improvements
