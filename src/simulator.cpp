@@ -1,9 +1,24 @@
+/**
+ * @file simulator.cpp
+ * @brief Simulator class implementation.
+ *
+ * Contains the simulation logic for managing multiple aircraft,
+ * charging stations, and collecting statistics.
+ */
+
+/*****************************************************************
+ * Includes
+ *****************************************************************/
 
 #include "simulator.hpp"
 #include "aircraft.hpp"
 #include <cstring>
 #include <iomanip>
 #include <iostream>
+
+/*****************************************************************
+ * Member function definitions
+ *****************************************************************/
 
 /**
  * @class Simulator
@@ -45,12 +60,6 @@ Simulator::Simulator(int vehicle_count) {
 
 /**
  * @class Simulator
- * @brief Destructor for simulator.
- */
-Simulator::~Simulator() {}
-
-/**
- * @class Simulator
  * @brief Run a complete simulation.
  * @param duration_ms Sim time, in milliseconds
  */
@@ -76,7 +85,7 @@ void Simulator::simulate(int duration_ms) {
  * @param index Index of vehicle in m_vehicles
  */
 void Simulator::update_aircraft(Aircraft *vehicle) {
-  vehicle->m_ticks_per_mode[vehicle->m_sim_mode]++;
+  vehicle->m_mode_ticks[vehicle->m_sim_mode]++;
   vehicle->fault_chance(m_step_ms);
 
   // State machine for aircraft
@@ -95,17 +104,21 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
   } else if (MODE__WAITING_TO_CHARGE == vehicle->m_sim_mode) {
     if (m_num_chargers_in_use < m_charger_count) {
       m_num_chargers_in_use++;
-      vehicle->set_mode(MODE__CHARGING);
+      vehicle->m_sim_mode = MODE__CHARGING;
     } else {
       vehicle->m_sim_ticks_waiting_chg++;
     }
   } else if (MODE__CHARGE_COMPLETE == vehicle->m_sim_mode) {
     m_num_chargers_in_use--;
-    vehicle->set_mode(MODE__IDLE);
+    vehicle->m_sim_mode = MODE__IDLE;
     charge_next_aircraft();
   }
 }
 
+/**
+ * @class Simulator
+ * @brief Find the next aircraft to charge, and charge it. FIFO waiting queue.
+ */
 void Simulator::charge_next_aircraft() {
   int longest_wait = -1;
   int longest_wait_index = -1;
@@ -119,9 +132,9 @@ void Simulator::charge_next_aircraft() {
     }
   }
 
-  if (longest_wait > -1) {
+  if (longest_wait_index > -1) {
     m_num_chargers_in_use++;
-    m_vehicles[longest_wait_index].set_mode(MODE__CHARGING);
+    m_vehicles[longest_wait_index].m_sim_mode = MODE__CHARGING;
   }
 }
 
@@ -129,7 +142,7 @@ void Simulator::charge_next_aircraft() {
  * @class Simulator
  * @brief Output CSV report of how long each vehicle spent in each mode.
  */
-void Simulator::report_mode_results() {
+void Simulator::report_time_per_mode() {
   std::cout << "VehicleNumber,VehicleType,Idle,Wait_Chg,Chg_Done,Fly"
             << std::endl;
 
@@ -137,10 +150,10 @@ void Simulator::report_mode_results() {
 
   for (int i = 0; i < m_vehicle_count; i++) {
     vehicle = &m_vehicles[i];
-    std::cout << i << "," << aircraft_type_str[vehicle->get_type()] << ",";
+    std::cout << i << "," << aircraft_type_str[vehicle->m_type] << ",";
 
     for (int j = 0; j < MAX_AIRCRAFT_MODES; j++) {
-      std::cout << (double)vehicle->get_mode_stats()[j] / m_ticks << ",";
+      std::cout << (double)vehicle->m_mode_ticks[j] / m_ticks << ",";
     }
 
     std::cout << std::endl;
@@ -154,11 +167,11 @@ void Simulator::report_mode_results() {
  */
 void Simulator::report_step(Aircraft *vehicle) {
   std::cout << std::fixed << std::setprecision(5) << "["
-            << aircraft_type_str[vehicle->get_type()] << "] "
-            << aircraft_mode_str[vehicle->get_mode()]
-            << " (rem: " << vehicle->get_rem_energy()
-            << "; trip: " << vehicle->get_rem_trip_len() << "/"
-            << vehicle->get_trip_len() << ")" << std::endl;
+            << aircraft_type_str[vehicle->m_type] << "] "
+            << aircraft_mode_str[vehicle->m_sim_mode]
+            << " (rem: " << vehicle->m_sim_rem_energy
+            << "; trip: " << vehicle->m_sim_trip_miles_elapsed << "/"
+            << vehicle->m_sim_trip_len << ")" << std::endl;
 }
 
 /**
@@ -183,9 +196,9 @@ void Simulator::report_vehicle_type_stats() {
     int total_passenger_miles = 0;
 
     for (int j_vehicle = 0; j_vehicle < 20; j_vehicle++) {
-      if (i_type == m_vehicles[j_vehicle].get_type()) {
+      if (i_type == m_vehicles[j_vehicle].m_type) {
         vehicle_count++;
-        total_passenger_miles += m_vehicles[j_vehicle].get_total_passenger_mi();
+        total_passenger_miles += m_vehicles[j_vehicle].m_sim_total_passenger_mi;
         total_faults += m_vehicles[j_vehicle].m_sim_total_num_faults;
       }
     }
