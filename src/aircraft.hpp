@@ -37,7 +37,7 @@ extern const char *aircraft_mode_str[];
  * @brief Stores characteristics and simulation parameters for an aircraft.
  */
 class Aircraft {
-protected:
+public:
   // Aircraft characterization (given)
   AircraftType m_aircraft_type;
   int m_cruise_speed;         /** Cruise speed (mph) */
@@ -60,6 +60,9 @@ protected:
   double m_sim_trip_len;           /** Trip length (miles) */
   double m_sim_miles_traveled; /** Number of miles traveled on current trip */
   int m_sim_passenger_cnt;     /** Number of passengers for the current trip */
+  int m_sim_ticks_waiting_chg; /** Number of ticks spent waiting to charge */
+  double m_sim_curr_flight_time_ms; /** Flight time for the currently active
+                                       trip (ms) */
 
   /** Track time spent per mode */
   int m_ticks_per_mode[MAX_AIRCRAFT_MODES] = {0};
@@ -71,7 +74,6 @@ protected:
     m_sim_rem_energy = (double)m_max_battery_cap;
   }
 
-public:
   Aircraft() {
     m_sim_total_passenger_mi = 0.0;
     m_sim_total_num_faults = 0;
@@ -80,6 +82,8 @@ public:
     m_sim_mode = MODE__IDLE;
     m_sim_trip_len = 0.0;
     m_sim_miles_traveled = 0.0;
+    m_sim_ticks_waiting_chg = 0;
+    m_sim_curr_flight_time_ms = 0.0;
   };
 
   virtual ~Aircraft() = default;
@@ -90,6 +94,8 @@ public:
 
   void fly(double duration_ms);
 
+  void fault_chance(double duration_ms);
+
   void charge(double duration_ms);
 
   // Getters/setters
@@ -99,6 +105,8 @@ public:
 
   AircraftMode get_mode() { return m_sim_mode; };
   void set_mode(AircraftMode mode) { m_sim_mode = mode; };
+
+  int get_total_passenger_mi() { return m_sim_total_passenger_mi; };
 
   double get_trip_len() { return m_sim_trip_len; };
 

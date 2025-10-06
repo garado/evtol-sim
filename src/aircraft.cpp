@@ -1,6 +1,7 @@
 
 #include "aircraft.hpp"
 #include "common.hpp"
+#include <cstdlib>
 
 const char *aircraft_type_str[] = {
     "Alpha", "Beta", "Charlie", "Delta", "Echo",
@@ -9,29 +10,6 @@ const char *aircraft_type_str[] = {
 const char *aircraft_mode_str[] = {
     "IDLE", "WAIT_CHG", "CHG_DONE", "CHG", "FLY",
 };
-
-/**
- * @class Aircraft
- * @brief Run aircraft state machine for a specified duration
- * @param duration_ms
- */
-void Aircraft::run(double duration_ms) {
-  m_ticks_per_mode[m_sim_mode]++;
-
-  if (MODE__IDLE == m_sim_mode) {
-    if (m_sim_rem_energy <= m_reserve_bat_target) {
-      m_sim_mode = MODE__WAITING_TO_CHARGE;
-    } else {
-      // int new_trip_len = rand() % (int)vehicle->get_max_trip_len();
-      start_trip(m_max_passenger_cnt, 30);
-    }
-  } else if (MODE__FLYING == m_sim_mode) {
-    fly(duration_ms);
-  } else if (MODE__CHARGING == m_sim_mode) {
-    charge(duration_ms);
-  } else if (MODE__WAITING_TO_CHARGE == m_sim_mode) {
-  }
-}
 
 /**
  * @class Aircraft
@@ -46,6 +24,18 @@ void Aircraft::start_trip(int passengers, double distance) {
 
 /**
  * @class Aircraft
+ * @brief Calculate fault chance
+ */
+void Aircraft::fault_chance(double duration_ms) {
+  double fault_prob = (duration_ms / MS_PER_HOUR) * m_p_fault_hourly;
+
+  if ((double)rand() / RAND_MAX < fault_prob) {
+    m_sim_total_num_faults++;
+  }
+}
+
+/**
+ * @class Aircraft
  * @brief Update flight parameters
  */
 void Aircraft::fly(double duration_ms) {
@@ -54,19 +44,18 @@ void Aircraft::fly(double duration_ms) {
 
   double miles_traveled = m_cruise_speed * (duration_ms / (double)MS_PER_HOUR);
 
+  m_sim_curr_flight_time_ms += duration_ms;
+
   if (capacity_used > m_sim_rem_energy) {
-    // @TODO Not enough battery to travel this duration (this shouldn't happen)
+    m_sim_mode = MODE__WAITING_TO_CHARGE;
   } else {
+    if ((m_sim_miles_traveled + miles_traveled) >= m_sim_trip_len) {
+      m_sim_mode = MODE__IDLE; // Trip complete
+    }
+
     m_sim_rem_energy -= capacity_used;
     m_sim_miles_traveled += miles_traveled;
     m_sim_total_passenger_mi += miles_traveled * m_sim_passenger_cnt;
-
-    if ((m_sim_miles_traveled + miles_traveled) >= m_sim_trip_len) {
-      // The trip is done
-      m_sim_mode = MODE__IDLE;
-    } else {
-      // Trip still in progress
-    }
   }
 }
 
