@@ -1,0 +1,6 @@
+VehicleType,VehicleCount,FlightTimePerFlight(Hours),DistPerFlight,ChgSessionTime,TotalFaults,TotalPassengerMiles
+Alpha,2,1.66667,199.00000,0.05833,2,1592
+Bravo,6,0.55833,55.83333,0.20000,1,3348
+Charlie,6,0.62500,98.66667,0.79167,1,3552
+Delta,3,0.83750,75.00000,0.05000,2,900
+Echo,3,0.45556,13.54167,0.30000,9,162
