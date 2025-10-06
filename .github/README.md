@@ -42,11 +42,12 @@ There are a few small samples in `tests/` demonstrating usage of `gtest` for mor
 - **Faults are largely non-critical, so they don't affect operation in this simulation.** Probability is far too high for it to be a critical fault requiring immediate landing/taking out of the sim (10^-9 probability of fault per hour for catastrophic failures).
 - **All trips use maximum passengers and maximum trip distance.** Makes the simulation simpler but reduces realism. A more sophisticated model would vary these parameters.
 
-## Future improvements
+## How to make it better
+- **More descriptive parameters** - each aircraft in reality would have unique battery characteristics (charge/discharge curves), takeoff/landing behavior, aerodynamic profiles, etc. A more accurate sim would address these - for example, having separate `battery_discharge()`, `battery_charge()` methods for each aircraft.
 - **Vary trip parameters** - for a more realistic simulation.
-- **Improved charging scheme** - each aircraft is spending a large percentage of time waiting to charge. To maximize profit, the charging scheme needs to change. Aircraft should get in and get out of the charger as fast as possible, only charging to what they need for a trip plus some reserves. (Or just get more chargers :P)
-- **More descriptive fault behavior** - the probability given is very vague. Should define different criticalities of faults, and have probabilities for each mode.
-- **Add a maintenance mode** - to allow aircraft to recover from all those faults.
+- **Improved charging scheme** - each aircraft is spending a large percentage of time waiting to charge. To maximize profit, the charging scheme needs to change. Aircraft should get in and get out of the charger as fast as possible, only charging to what they need for a trip plus some reserves. (Or just get more chargers.)
+- **More descriptive fault behavior** - the probability given is very vague. Should define different criticalities of faults, and have probabilities for each mode. Or even better, different fault probabilities for each subsystem, for each mode, for each criticiality.
+- **Add a maintenance mode** - to allow aircraft to recover from all those faults (adds realism).
 
 ## Results
 
@@ -65,7 +66,7 @@ Delta,4,1.66669,150,0.374708,2,1200
 Echo,6,0.8069,24.2067,0.300028,16,579
 ```
 
-Here is an additional plot showing the percentage of time that each aircraft type spent in each state
+Here is an additional plot showing the percentage of time that each aircraft type spent in each state.
 
 ![Mode distribution](mode_stats.png)
 
