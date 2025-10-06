@@ -1,7 +1,7 @@
 
 #include "common.hpp"
 #include "simulator.hpp"
-#include <random>
+#include <cstdlib>
 
 constexpr int SIM_DURATION_MIN = 5;
 constexpr int SIM_STEP_MS = MS_PER_SEC * 60 * 1;
