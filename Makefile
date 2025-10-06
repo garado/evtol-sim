@@ -7,7 +7,7 @@ TEST_TARGET = $(BUILD_DIR)/test_runner
 SRCS = src/main.cpp src/simulator.cpp src/aircraft.cpp
 OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(SRCS:.cpp=.o)))
 
-TEST_SRCS = tests/test_aircraft.cpp tests/test_simulator.cpp src/simulator.cpp src/aircraft.cpp
+TEST_SRCS = tests/test_aircraft.cpp src/simulator.cpp src/aircraft.cpp
 TEST_OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(TEST_SRCS:.cpp=.o)))
 
 all: $(TARGET)
