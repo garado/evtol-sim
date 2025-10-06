@@ -3,8 +3,8 @@
  * @brief Aircraft class definition.
  */
 
-#ifndef __AIRCRAFT_H__
-#define __AIRCRAFT_H__
+#ifndef AIRCRAFT_H
+#define AIRCRAFT_H
 
 /*****************************************************************
  * Includes
@@ -89,12 +89,6 @@ public:
   double m_sim_trip_miles_elapsed; /** Miles traveled on current trip */
   int m_sim_trip_passenger_cnt;    /** Passengers for current trip */
 
-  void calculate_custom_params() {
-    m_charge_per_hour = m_max_battery_cap / m_charge_time;
-    m_max_trip_len = 1 / (m_energy_use_cruise / m_max_battery_cap);
-    m_sim_rem_energy = (double)m_max_battery_cap;
-  }
-
   Aircraft() {
     memset(m_mode_ticks, 0, sizeof(m_mode_ticks));
     m_sim_total_passenger_mi = 0.0;
@@ -141,6 +135,13 @@ public:
    * @param duration_ms The duration for which to charge the aircraft.
    */
   void charge(double duration_ms);
+
+  /**
+   * @class Aircraft
+   * @brief Calculate derived parameters from the given per-vehicle-type
+   * parameters.
+   */
+  void calculate_custom_params();
 };
 
 /**
@@ -233,4 +234,4 @@ public:
   }
 };
 
-#endif /* __AIRCRAFT_H__ */
+#endif /* AIRCRAFT_H */

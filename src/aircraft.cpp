@@ -32,6 +32,27 @@ const char *aircraft_mode_str[] = {
 
 /**
  * @class Aircraft
+ * @brief Calculate derived parameters from the given per-vehicle-type
+ * parameters.
+ */
+void Aircraft::calculate_custom_params() {
+  if (m_energy_use_cruise > 0) {
+    m_max_trip_len = m_max_battery_cap / m_energy_use_cruise;
+  } else {
+    m_max_trip_len = 0;
+  }
+
+  if (m_charge_time > 0) {
+    m_charge_per_hour = m_max_battery_cap / m_charge_time;
+  } else {
+    m_charge_per_hour = 0;
+  }
+
+  m_sim_rem_energy = (double)m_max_battery_cap;
+}
+
+/**
+ * @class Aircraft
  * @brief Initialize a trip.
  * @param passengers Number of passengers for current trip
  * @param distance Distance (miles) for current trip

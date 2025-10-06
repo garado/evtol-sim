@@ -18,6 +18,13 @@
 #include <iostream>
 
 /*****************************************************************
+ * Macros
+ *****************************************************************/
+
+/** @brief Show vehicle statistics */
+#define DEBUG_SIM_STEP (false)
+
+/*****************************************************************
  * Member function definitions
  *****************************************************************/
 
@@ -70,12 +77,16 @@ void Simulator::simulate(int duration_ms) {
   std::cout << "Simulating for " << duration_ms << "ms" << std::endl;
 
   for (int time = 0; time < duration_ms; time += m_step_ms) {
+#if DEBUG_SIM_STEP
     std::cout << "----------------------" << std::endl;
     std::cout << "t = " << time << "ms" << std::endl;
+#endif
 
     for (int i = 0; i < m_vehicle_count; i++) {
       update_aircraft(&m_vehicles[i]);
+#if DEBUG_SIM_STEP
       report_step(&m_vehicles[i]);
+#endif
     }
 
     m_ticks++;
@@ -108,6 +119,7 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
     if (m_num_chargers_in_use < m_charger_count) {
       m_num_chargers_in_use++;
       vehicle->m_sim_charging_sessions++;
+      vehicle->m_sim_ticks_waiting_chg = 0;
       vehicle->m_sim_mode = MODE__CHARGING;
     } else {
       vehicle->m_sim_ticks_waiting_chg++;
@@ -124,6 +136,10 @@ void Simulator::update_aircraft(Aircraft *vehicle) {
  * @brief Find the next aircraft to charge, and charge it. FIFO waiting queue.
  */
 void Simulator::charge_next_aircraft() {
+  if (m_num_chargers_in_use >= m_charger_count) {
+    return;
+  }
+
   int longest_wait = -1;
   int longest_wait_index = -1;
 
@@ -139,6 +155,7 @@ void Simulator::charge_next_aircraft() {
   if (longest_wait_index > -1) {
     m_num_chargers_in_use++;
     m_vehicles[longest_wait_index].m_sim_charging_sessions++;
+    m_vehicles[longest_wait_index].m_sim_ticks_waiting_chg = 0;
     m_vehicles[longest_wait_index].m_sim_mode = MODE__CHARGING;
   }
 }

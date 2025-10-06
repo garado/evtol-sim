@@ -3,14 +3,15 @@
  * @brief Simulator class definition.
  */
 
-#ifndef __SIMULATOR_H__
-#define __SIMULATOR_H__
+#ifndef SIMULATOR_H
+#define SIMULATOR_H
 
 /*****************************************************************
  * Includes
  *****************************************************************/
 
 #include "aircraft.hpp"
+#include "common.hpp"
 
 /*****************************************************************
  * Enums and structs
@@ -65,8 +66,6 @@ public:
    */
   void report_time_per_mode();
 
-  void update_vehicle_type_stats();
-
   /**
    * @class Simulator
    * @brief Output CSV report of aggregate vehicle type statistics, per the
@@ -81,14 +80,13 @@ public:
    */
   void report_step(Aircraft *vehicle);
 
-  int m_step_ms = 10; /** Time step interval (ms) */
-
 private:
   int m_vehicle_count = MAX_VEHICLES; /** Vehicles to use in simulation */
   int m_charger_count = MAX_CHARGERS; /** Available chargers */
   int m_num_chargers_in_use = 0;      /** Chargers actively being used */
   Aircraft m_vehicles[MAX_VEHICLES];  /** Data for simulated vehicles */
   int m_ticks = 0;                    /** Total elapsed simulation ticks */
+  int m_step_ms = MS_PER_MIN * 5;     /** Time step interval (ms) */
 
   /**
    * @class Simulator
@@ -97,4 +95,4 @@ private:
   void charge_next_aircraft();
 };
 
-#endif /* __SIMULATOR_H__ */
+#endif /* SIMULATOR_H */

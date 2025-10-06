@@ -16,7 +16,6 @@
  *****************************************************************/
 
 constexpr int SIM_DURATION_MS = MS_PER_HOUR * 3;
-constexpr int SIM_STEP_MS = MS_PER_SEC * 30;
 
 /*****************************************************************
  * Function definitions
@@ -26,7 +25,6 @@ int main() {
   srand(532);
 
   Simulator sim(MAX_VEHICLES);
-  sim.m_step_ms = SIM_STEP_MS;
   sim.simulate(SIM_DURATION_MS);
 
   // sim.report_time_per_mode();
