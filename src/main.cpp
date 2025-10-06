@@ -22,7 +22,7 @@ constexpr int SIM_DURATION_MS = MS_PER_HOUR * 3;
  *****************************************************************/
 
 int main() {
-  srand(532);
+  srand(12452);
 
   Simulator sim(MAX_VEHICLES);
   sim.simulate(SIM_DURATION_MS);

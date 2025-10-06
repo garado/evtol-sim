@@ -86,7 +86,7 @@ private:
   int m_num_chargers_in_use = 0;      /** Chargers actively being used */
   Aircraft m_vehicles[MAX_VEHICLES];  /** Data for simulated vehicles */
   int m_ticks = 0;                    /** Total elapsed simulation ticks */
-  int m_step_ms = MS_PER_MIN * 5;     /** Time step interval (ms) */
+  int m_step_ms = 100;                /** Time step interval (ms) */
 
   /**
    * @class Simulator
